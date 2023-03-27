@@ -1,4 +1,4 @@
-/*  APIRESTFUL-SOCIALNETWORK/index.js
+/*  APIRESTFUL-SOCIALNETWORK/database.js
        ____     __           _           _____        __
       / __/_ __/ /  ___ ____(_)__  ___  / ___/__  ___/ /__
  ___ _\ \/ // / _ \/ -_) __/ / _ `/ _ \/ /__/ _ \/ _  / -_)_____________________
@@ -22,42 +22,20 @@
 |                                                                               |
 '==============================================================================*/
 
-const { connection } = require('./database/connection');
-const express = require('express');
-const cors = require('cors');
+const mongoose = require('mongoose');
 
-// welcome message
-console.log('Loading ApiRestful SocialNetwork');
-// database connection
-connection();
-
-// cretate node server
-const app = express();
-const PORT = 3900;
-
-// config cors
-app.use(cors());
-
-// convert body data to js objects
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
-
-// load route config
-
-// test route
-app.get('/test', (request, response) =>
+const connection = async() =>
 {
-    return response.status(200).json
-    ({
-        id: 1,
-        name: 'Javier',
-        'web': 'syberiancode.com'
-    });
-});
+    try
+    {
+        await mongoose.connect("mongodb://0.0.0.0:27017/ApiRestful_SocialNetwork");
+        console.log("Database connected successfully!!");
+    }
+    catch(error)
+    {
+        console.error(error);
+        throw new Error('Cannot connect to the database...')
+    }
+}
 
-
-// put server to listen http request
-app.listen(PORT, () =>
-{
-    console.log(`Server running at Port: ${PORT}`);
-});
+module.exports = { connection };

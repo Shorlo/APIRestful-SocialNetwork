@@ -1,4 +1,4 @@
-/*  APIRESTFUL-SOCIALNETWORK/index.js
+/*  APIRESTFUL-SOCIALNETWORK/publicationRoutes.js
        ____     __           _           _____        __
       / __/_ __/ /  ___ ____(_)__  ___  / ___/__  ___/ /__
  ___ _\ \/ // / _ \/ -_) __/ / _ `/ _ \/ /__/ _ \/ _  / -_)_____________________
@@ -22,42 +22,3 @@
 |                                                                               |
 '==============================================================================*/
 
-const { connection } = require('./database/connection');
-const express = require('express');
-const cors = require('cors');
-
-// welcome message
-console.log('Loading ApiRestful SocialNetwork');
-// database connection
-connection();
-
-// cretate node server
-const app = express();
-const PORT = 3900;
-
-// config cors
-app.use(cors());
-
-// convert body data to js objects
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
-
-// load route config
-
-// test route
-app.get('/test', (request, response) =>
-{
-    return response.status(200).json
-    ({
-        id: 1,
-        name: 'Javier',
-        'web': 'syberiancode.com'
-    });
-});
-
-
-// put server to listen http request
-app.listen(PORT, () =>
-{
-    console.log(`Server running at Port: ${PORT}`);
-});

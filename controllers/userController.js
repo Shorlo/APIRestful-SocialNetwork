@@ -23,11 +23,12 @@
 '==============================================================================*/
 
 const bcrypt = require('bcrypt');
+const { response } = require('express');
 const User = require('../models/User');
 const { param } = require('../routes/userRoutes');
 
 
-// test actions
+// Test actions
 const testUser = (request, response) => 
 {
      return response.status(200).send
@@ -75,7 +76,7 @@ const registerUser = (request, response) =>
           let pwd = await bcrypt.hash(params.password, 10);
           params.password = pwd;
 
-          //Check duplicates
+          // Check duplicates
           
           let userToSave = new User(params);
           // Save user in database and return response
@@ -116,4 +117,50 @@ const registerUser = (request, response) =>
      });
 }
 
-module.exports = { testUser, registerUser };
+const loginUser = (request, response) =>
+{
+     // Get params
+     let params = request.body;
+     if(!params.email || !params.password)
+     {
+          return response.status(400).send
+          ({
+               status: 'Error',
+               message: 'Missing data to send'
+          });
+     }
+     
+     // Search in database if exists
+    
+     User.findOne({email: params.email}).select({'password': 0}).then((user) =>
+     {
+          if(!user)
+          {
+               return response.status(404).send
+               ({
+                    status: 'Error',
+                    message: 'User does not exist'
+               });
+          }
+          // Return token
+
+          // Return user data
+          return response.status(200).send
+          ({
+               status: 'Success',
+               message: 'Login successfully',
+               user
+          });
+     }).catch((error) =>
+     {
+          return response.status(404).send
+               ({
+                    status: 'Error',
+                    message: 'Login error',
+                    error: error
+               });
+     });
+     
+}
+
+module.exports = { testUser, registerUser, loginUser };

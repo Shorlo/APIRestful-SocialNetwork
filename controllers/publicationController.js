@@ -1,4 +1,4 @@
-/*  APIRESTFUL-SOCIALNETWORK/userRoutes.js
+/*  APIRESTFUL-SOCIALNETWORK/publicationController.js
        ____     __           _           _____        __
       / __/_ __/ /  ___ ____(_)__  ___  / ___/__  ___/ /__
  ___ _\ \/ // / _ \/ -_) __/ / _ `/ _ \/ /__/ _ \/ _  / -_)_____________________
@@ -22,12 +22,13 @@
 |                                                                               |
 '==============================================================================*/
 
-const express = require('express');
-const router = express.Router();
-const UserController = require('../controllers/userController');
+// test actions
+const testPublication = (request, response) => 
+{
+     return response.status(200).send
+     ({
+          message: 'Message sent from: controllers/publication.js'
+     });  
+}
 
-// define routes
-router.get('/testUser', UserController.testUser);
-router.post('/registerUser', UserController.registerUser);
-
-module.exports = router;
+module.exports = { testPublication };

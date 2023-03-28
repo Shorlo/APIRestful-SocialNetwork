@@ -1,11 +1,11 @@
-/*  APIRESTFUL-SOCIALNETWORK/publication.js
+/*  APIRESTFUL-SOCIALNETWORK/User.js
        ____     __           _           _____        __
       / __/_ __/ /  ___ ____(_)__  ___  / ___/__  ___/ /__
  ___ _\ \/ // / _ \/ -_) __/ / _ `/ _ \/ /__/ _ \/ _  / -_)_____________________
 |   /___/\_, /_.__/\__/_/ /_/\_,_/_//_/\___/\___/\_,_/\__/                      |
 | Shorlo/___/                                                                   |
 |                                                                               |
-|   Copyright © 2023 Javier Sainz de Baranda Goñi.                         |
+|   Copyright © 2023 Javier Sainz de Baranda Goñi.                              |
 |   Released under the terms of the GNU Lesser General Public License v3.       |
 |                                                                               |
 |   This program is free software: you can redistribute it and/or modify it     |
@@ -22,13 +22,46 @@
 |                                                                               |
 '==============================================================================*/
 
-// test actions
-const testPublication = (request, response) => 
-{
-     return response.status(200).send
-     ({
-          message: 'Message sent from: controllers/publication.js'
-     });  
-}
+const {Schema, model} = require('mongoose');
 
-module.exports = { testPublication };
+const UserSchema = Schema
+({
+    name: 
+    {
+        type: String,
+        require: true
+    },
+    surname: String,
+    nick:
+    {
+        type: String,
+        require: true
+    },
+    email:
+    {
+        type:String,
+        require: true
+    },
+    password:
+    {
+        type: String,
+        require: true
+    },
+    role:
+    {
+        type: String,
+        default: 'role_user'
+    },
+    image:
+    {
+        type: String,
+        default: 'default.png'
+    },
+    create_at:
+    {
+        type: Date,
+        default: Date.now
+    }
+});
+                        
+module.exports = model('User', UserSchema, 'users'); //'MODEL_NAME, MODEL_SCHEMA, COLLECTION_MODEL_DATABASE

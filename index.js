@@ -5,7 +5,7 @@
 |   /___/\_, /_.__/\__/_/ /_/\_,_/_//_/\___/\___/\_,_/\__/                      |
 | Shorlo/___/                                                                   |
 |                                                                               |
-|   Copyright © 2023 Javier Sainz de Baranda Goñi.                         |
+|   Copyright © 2023 Javier Sainz de Baranda Goñi.                              |
 |   Released under the terms of the GNU Lesser General Public License v3.       |
 |                                                                               |
 |   This program is free software: you can redistribute it and/or modify it     |
@@ -42,9 +42,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-// load route config
-
 // test route
+/*
 app.get('/test', (request, response) =>
 {
     return response.status(200).json
@@ -54,6 +53,16 @@ app.get('/test', (request, response) =>
         'web': 'syberiancode.com'
     });
 });
+*/
+
+// load route config
+const UserRoutes = require('./routes/userRoutes');
+const PublicationRoutes = require('./routes/publicationRoutes');
+const FollowRoutes = require('./routes/followRoutes');
+
+app.use('/api/user', UserRoutes);
+app.use('/api/publication', PublicationRoutes);
+app.use('/api/follow', FollowRoutes);
 
 
 // put server to listen http request

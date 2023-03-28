@@ -1,4 +1,4 @@
-/*  APIRESTFUL-SOCIALNETWORK/userRoutes.js
+/*  APIRESTFUL-SOCIALNETWORK/Publication.js
        ____     __           _           _____        __
       / __/_ __/ /  ___ ____(_)__  ___  / ___/__  ___/ /__
  ___ _\ \/ // / _ \/ -_) __/ / _ `/ _ \/ /__/ _ \/ _  / -_)_____________________
@@ -21,13 +21,3 @@
 |   with this program. If not, see <http://www.gnu.org/licenses/>.              |
 |                                                                               |
 '==============================================================================*/
-
-const express = require('express');
-const router = express.Router();
-const UserController = require('../controllers/userController');
-
-// define routes
-router.get('/testUser', UserController.testUser);
-router.post('/registerUser', UserController.registerUser);
-
-module.exports = router;

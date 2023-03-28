@@ -5,7 +5,7 @@
 |   /___/\_, /_.__/\__/_/ /_/\_,_/_//_/\___/\___/\_,_/\__/                      |
 | Shorlo/___/                                                                   |
 |                                                                               |
-|   Copyright © 2023 Javier Sainz de Baranda Goñi.                         |
+|   Copyright © 2023 Javier Sainz de Baranda Goñi.                              |
 |   Released under the terms of the GNU Lesser General Public License v3.       |
 |                                                                               |
 |   This program is free software: you can redistribute it and/or modify it     |
@@ -22,3 +22,11 @@
 |                                                                               |
 '==============================================================================*/
 
+const express = require('express');
+const router = express.Router();
+const FollowController = require('../controllers/followController');
+
+// define routes
+router.get('/testFollow', FollowController.testFollow);
+
+module.exports = router;

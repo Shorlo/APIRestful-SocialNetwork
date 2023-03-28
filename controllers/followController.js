@@ -1,11 +1,11 @@
-/*  APIRESTFUL-SOCIALNETWORK/user.js
+/*  APIRESTFUL-SOCIALNETWORK/followController.js
        ____     __           _           _____        __
       / __/_ __/ /  ___ ____(_)__  ___  / ___/__  ___/ /__
  ___ _\ \/ // / _ \/ -_) __/ / _ `/ _ \/ /__/ _ \/ _  / -_)_____________________
 |   /___/\_, /_.__/\__/_/ /_/\_,_/_//_/\___/\___/\_,_/\__/                      |
 | Shorlo/___/                                                                   |
 |                                                                               |
-|   Copyright © 2023 Javier Sainz de Baranda Goñi.                         |
+|   Copyright © 2023 Javier Sainz de Baranda Goñi.                              |
 |   Released under the terms of the GNU Lesser General Public License v3.       |
 |                                                                               |
 |   This program is free software: you can redistribute it and/or modify it     |
@@ -23,12 +23,12 @@
 '==============================================================================*/
 
 // test actions
-const testUser = (request, response) => 
+const testFollow = (request, response) => 
 {
      return response.status(200).send
      ({
-          message: 'Message sent from: controllers/user.js'
+          message: 'Message sent from: controllers/follow.js'
      });  
 }
 
-module.exports = { testUser };
+module.exports = { testFollow };

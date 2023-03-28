@@ -131,8 +131,8 @@ const loginUser = (request, response) =>
      }
      
      // Search in database if exists
-    
-     User.findOne({email: params.email}).select({'password': 0}).then((user) =>
+                                      //.select({'password': 0})       
+     User.findOne({email: params.email}).then((user) =>
      {
           if(!user)
           {
@@ -142,14 +142,33 @@ const loginUser = (request, response) =>
                     message: 'User does not exist'
                });
           }
-          // Return token
+
+          // Check password
+          const pwd = bcrypt.compareSync(params.password, user.password);
+          if(!pwd)
+          {
+               return response.status(400).send
+               ({
+                    status: 'Error',
+                    message: 'Password incorrect...'
+               });
+          }
+          
+          // Get token
+          const token = false;
 
           // Return user data
           return response.status(200).send
           ({
                status: 'Success',
                message: 'Login successfully',
-               user
+               user: 
+               {
+                    id: user._id,
+                    name: user.name,
+                    nick: user.nick
+               },
+               token
           });
      }).catch((error) =>
      {
@@ -160,7 +179,6 @@ const loginUser = (request, response) =>
                     error: error
                });
      });
-     
 }
 
 module.exports = { testUser, registerUser, loginUser };

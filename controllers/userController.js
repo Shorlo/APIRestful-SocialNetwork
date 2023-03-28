@@ -170,7 +170,7 @@ const loginUser = (request, response) =>
                },
                token
           });
-     }).catch((error) =>
+     }).catch((error) => 
      {
           return response.status(404).send
                ({

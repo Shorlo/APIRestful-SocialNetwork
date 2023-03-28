@@ -23,10 +23,8 @@
 '==============================================================================*/
 
 const bcrypt = require('bcrypt');
-const { response } = require('express');
 const User = require('../models/User');
-const { param } = require('../routes/userRoutes');
-
+const {createToken} = require('../services/jwt');
 
 // Test actions
 const testUser = (request, response) => 
@@ -155,7 +153,7 @@ const loginUser = (request, response) =>
           }
           
           // Get token
-          const token = false;
+          const token = createToken(user);
 
           // Return user data
           return response.status(200).send

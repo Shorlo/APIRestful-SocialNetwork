@@ -25,9 +25,10 @@
 const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/userController');
+const check = require('../middelwares/auth');
 
 // define routes
-router.get('/testUser', UserController.testUser);
+router.get('/testUser', check.auth, UserController.testUser);
 router.post('/registerUser', UserController.registerUser);
 router.post('/loginUser', UserController.loginUser);
 

@@ -24,14 +24,15 @@
 
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
-const {createToken} = require('../services/jwt');
+const jwt = require('../services/jwt');
 
 // Test actions
 const testUser = (request, response) => 
 {
      return response.status(200).send
      ({
-          message: 'Message sent from: controllers/user.js'
+          message: 'Message sent from: controllers/user.js',
+          user: request.user
      });  
 }
 
@@ -153,7 +154,7 @@ const loginUser = (request, response) =>
           }
           
           // Get token
-          const token = createToken(user);
+          const token = jwt.createToken(user);
 
           // Return user data
           return response.status(200).send

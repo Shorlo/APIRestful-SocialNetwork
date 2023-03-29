@@ -23,6 +23,7 @@
 '==============================================================================*/
 
 const bcrypt = require('bcrypt');
+const { response } = require('express');
 const User = require('../models/User');
 const jwt = require('../services/jwt');
 
@@ -180,4 +181,41 @@ const loginUser = (request, response) =>
      });
 }
 
-module.exports = { testUser, registerUser, loginUser };
+const getUser = (request, response) =>
+{
+     // Get idUser by url
+     const idUser = request.params.id;
+
+     // Query to get user from database
+     User.findById(idUser).select({password: 0, role: 0 }).then((user) =>
+     {
+          if(!user)
+          {
+               return response.status(404).send
+               ({
+                    status: "Error",
+                    message: "User not found..."
+               });
+          }
+          // Return response
+
+          // Next -> get follows info
+
+          return response.status(200).send
+          ({
+               status: 'Success',
+               user: user
+          });
+     }).catch((error) =>
+     {
+          return response.status(404).send
+          ({
+              status: "Error",
+              error: error,
+              message: "Error getting user data..."
+          });
+     });
+     // Return response
+}
+
+module.exports = { testUser, registerUser, loginUser, getUser };

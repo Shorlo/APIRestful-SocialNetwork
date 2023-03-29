@@ -31,5 +31,6 @@ const check = require('../middelwares/auth');
 router.get('/testUser', check.auth, UserController.testUser);
 router.post('/registerUser', UserController.registerUser);
 router.post('/loginUser', UserController.loginUser);
+router.get('/getUser/:id', check.auth, UserController.getUser);
 
 module.exports = router;

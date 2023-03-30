@@ -228,7 +228,7 @@ const listUserPerPage = (request, response) =>
      }
      
      // Query mongoose pagination
-     let itemsPerPage = 1;
+     let itemsPerPage = 5;
      
      User.find().sort('_id').paginate(page, itemsPerPage).then(async (users) =>
      {
@@ -253,7 +253,7 @@ const listUserPerPage = (request, response) =>
                page,
                itemsPerPage,
                total: totalUsers,
-               pages: false
+               pages: Math.ceil(totalUsers/itemsPerPage)
           });
 
      }).catch((error) =>

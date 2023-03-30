@@ -26,6 +26,7 @@ const bcrypt = require('bcrypt');
 const { response } = require('express');
 const User = require('../models/User');
 const jwt = require('../services/jwt');
+const mongoosePagination = require('mongoose-pagination');
 
 // Test actions
 const testUser = (request, response) => 
@@ -219,19 +220,52 @@ const getUser = (request, response) =>
 
 const listUserPerPage = (request, response) =>
 {
-     // Check actual page
+     // Check current page
+     let page = 1;
+     if(request.params.page)
+     {
+          page = parseInt(request.params.page);
+     }
+     
+     // Query mongoose pagination
+     let itemsPerPage = 1;
+     
+     User.find().sort('_id').paginate(page, itemsPerPage).then(async (users) =>
+     {
+          // Get total users
+          const totalUsers = await User.countDocuments({}).exec();
+          if(!users)
+          {
+               return response.status(404).send
+               ({
+                    status: "Error",
+                    error: error,
+                    message: "No users avaliable..."
+                    
+               });
+          }
 
-     // Query mongoose paginate
-
-     // Return response
-
-     // Info de follows
-
-     return response.status(200).send
+          // Return response
+          return response.status(200).send
           ({
                status: 'Success',
-               message: 'list of users per page'
+               users,
+               page,
+               itemsPerPage,
+               total: totalUsers,
+               pages: false
           });
+
+     }).catch((error) =>
+     {
+          return response.status(500).send
+          ({
+               status: "Error",
+               error: error,
+               message: "Query error..."
+               
+          });
+     });
 }
 
 module.exports = { testUser, registerUser, loginUser, getUser, listUserPerPage };

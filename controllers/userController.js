@@ -215,7 +215,23 @@ const getUser = (request, response) =>
               message: "Error getting user data..."
           });
      });
-     // Return response
 }
 
-module.exports = { testUser, registerUser, loginUser, getUser };
+const listUserPerPage = (request, response) =>
+{
+     // Check actual page
+
+     // Query mongoose paginate
+
+     // Return response
+
+     // Info de follows
+
+     return response.status(200).send
+          ({
+               status: 'Success',
+               message: 'list of users per page'
+          });
+}
+
+module.exports = { testUser, registerUser, loginUser, getUser, listUserPerPage };

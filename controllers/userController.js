@@ -432,4 +432,16 @@ const updateUser = (request, response) =>
 }
 */
 
-module.exports = { testUser, registerUser, loginUser, getUser, listUserPerPage, updateUser };
+const uploadImage = (request, response) =>
+{
+     return response.status(200).send
+     ({
+          status: 'Success',
+          message: 'Image upload',
+          user: request.user,
+          file: request.file,
+          files: request.files
+     });
+}
+
+module.exports = { testUser, registerUser, loginUser, getUser, listUserPerPage, updateUser, uploadImage };

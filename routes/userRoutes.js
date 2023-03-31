@@ -28,7 +28,7 @@ const multer= require('multer');
 const UserController = require('../controllers/userController');
 const check = require('../middelwares/auth');
 
-// Upload multer upload files
+// Upload multer files
 const storage = multer.diskStorage
 ({
      destination: (request, file, cb) =>

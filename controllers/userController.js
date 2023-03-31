@@ -23,6 +23,7 @@
 '==============================================================================*/
 
 const bcrypt = require('bcrypt');
+const fs = require('fs');
 const { response, request } = require('express');
 const User = require('../models/User');
 const jwt = require('../services/jwt');
@@ -434,13 +435,49 @@ const updateUser = (request, response) =>
 
 const uploadImage = (request, response) =>
 {
+     // Get image file and check exists
+     if(!request.file)
+     {
+          return response.status(400).send
+          ({
+               status: 'Error',
+               message: 'Request without image file...',
+
+          });
+     }
+
+     // Get file name
+     const imageFile = request.file.originalname;
+
+     // Get extension file
+     const extensionFile = imageFile.split('.')[1];
+     
+     // If file is not image delete
+     if(extensionFile != 'png' && extensionFile != 'jpeg' && extensionFile != 'jpg' && extensionFile != 'gif' && extensionFile != 'PNG' && extensionFile != 'JPEG' && extensionFile != 'JPG' && extensionFile != 'GIF')
+     {
+          // Delete file and return response.
+        fs.unlinkSync(request.file.path);
+          return response.status(400).json
+          ({
+               status: 'Error',
+               message: 'File extension invalid...',
+          });
+     }
+     
+     // If file is a image save in database
+
+     // Return response
+
+
      return response.status(200).send
      ({
           status: 'Success',
           message: 'Image upload',
           user: request.user,
           file: request.file,
-          files: request.files
+          files: request.files,
+          image: imageFile,
+          extension: extensionFile
      });
 }
 

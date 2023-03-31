@@ -50,6 +50,6 @@ router.get('/getUser/:id', check.auth, UserController.getUser);
 router.get('/listUserPerPage/:page?', check.auth, UserController.listUserPerPage);
 router.put('/updateUser', check.auth, UserController.updateUser);
 router.post('/uploadImage', [check.auth, uploads.single('fileAvatar')], UserController.uploadImage);
-
+router.get('/getAvatar/:fileAvatar', check.auth, UserController.getAvatar);
 
 module.exports = router;

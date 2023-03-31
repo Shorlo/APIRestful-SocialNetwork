@@ -24,6 +24,7 @@
 
 const bcrypt = require('bcrypt');
 const fs = require('fs');
+const path = require('path');
 const { response, request } = require('express');
 const User = require('../models/User');
 const jwt = require('../services/jwt');
@@ -491,7 +492,34 @@ const uploadImage = (request, response) =>
                });
           })
      }
-     
 }
 
-module.exports = { testUser, registerUser, loginUser, getUser, listUserPerPage, updateUser, uploadImage };
+const getAvatar = (request, response) => 
+{
+     // Get url params for the image
+     const fileAvatar = request.params.fileAvatar;
+
+     // Build the path of real image
+     const filePath = './uploads/avatars/'+fileAvatar;
+
+     // Check image exists
+     fs.stat(filePath, (error, exists) =>
+     {
+          if(!exists)
+          {
+               return response.status(400).send
+               ({
+                    status: 'Error',
+                    message: 'File is not exists...'
+               });
+          }
+          // Return file
+          return response.sendFile(path.resolve(filePath)); // <-- ABSOLUTE PATH require('path')
+     });
+
+     
+
+       
+}
+
+module.exports = { testUser, registerUser, loginUser, getUser, listUserPerPage, updateUser, uploadImage, getAvatar };

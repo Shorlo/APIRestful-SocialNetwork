@@ -456,29 +456,42 @@ const uploadImage = (request, response) =>
      if(extensionFile != 'png' && extensionFile != 'jpeg' && extensionFile != 'jpg' && extensionFile != 'gif' && extensionFile != 'PNG' && extensionFile != 'JPEG' && extensionFile != 'JPG' && extensionFile != 'GIF')
      {
           // Delete file and return response.
-        fs.unlinkSync(request.file.path);
+          fs.unlinkSync(request.file.path);
           return response.status(400).json
           ({
                status: 'Error',
                message: 'File extension invalid...',
           });
      }
+     else
+     {
+          // Save image in database
+          User.findOneAndUpdate(request.user.id, {image: request.file.filename}, {new: true}).then((userUpdated) =>
+          {
+               if(!userUpdated)
+               {
+                    return response.status(400).send
+                    ({
+                         status: 'Error',
+                         message: 'User to update is empty...'
+                    });
+               }
+               return response.status(200).send
+               ({
+                    status: 'Success',
+                    user: userUpdated,
+                    file: request.file,
+               });
+          }).catch(() =>
+          {
+               return response.status(500).send
+               ({
+                    status: 'Error',
+                    message: 'Error finding user to update...'
+               });
+          })
+     }
      
-     // If file is a image save in database
-
-     // Return response
-
-
-     return response.status(200).send
-     ({
-          status: 'Success',
-          message: 'Image upload',
-          user: request.user,
-          file: request.file,
-          files: request.files,
-          image: imageFile,
-          extension: extensionFile
-     });
 }
 
 module.exports = { testUser, registerUser, loginUser, getUser, listUserPerPage, updateUser, uploadImage };

@@ -33,5 +33,6 @@ router.post('/registerUser', UserController.registerUser);
 router.post('/loginUser', UserController.loginUser);
 router.get('/getUser/:id', check.auth, UserController.getUser);
 router.get('/listUserPerPage/:page?', check.auth, UserController.listUserPerPage);
+router.put('/updateUser', check.auth, UserController.updateUser);
 
 module.exports = router;

@@ -23,7 +23,7 @@
 '==============================================================================*/
 
 const bcrypt = require('bcrypt');
-const { response } = require('express');
+const { response, request } = require('express');
 const User = require('../models/User');
 const jwt = require('../services/jwt');
 const mongoosePagination = require('mongoose-pagination');
@@ -49,7 +49,7 @@ const registerUser = (request, response) =>
      {
           return response.status(400).json
           ({
-               status: "Error",
+               status: 'Error',
                message: 'Missing data...',
                params
           });
@@ -103,7 +103,6 @@ const registerUser = (request, response) =>
                return response.status(500).json
                ({
                     status: 'Error',
-                    error: error,
                     message: 'User was not saved...'
                });
           });
@@ -111,9 +110,8 @@ const registerUser = (request, response) =>
      {
           return response.status(500).json
           ({
-               status: "Error",
-               error: error,
-               message: "User not found..."
+               status: 'Error',
+               message: 'User not found...'
           });
      });
 }
@@ -177,7 +175,6 @@ const loginUser = (request, response) =>
                ({
                     status: 'Error',
                     message: 'Login error',
-                    error: error
                });
      });
 }
@@ -194,8 +191,8 @@ const getUser = (request, response) =>
           {
                return response.status(404).send
                ({
-                    status: "Error",
-                    message: "User not found..."
+                    status: 'Error',
+                    message: 'User not found...'
                });
           }
           // Return response
@@ -211,8 +208,7 @@ const getUser = (request, response) =>
      {
           return response.status(404).send
           ({
-              status: "Error",
-              error: error,
+              status: 'Error',
               message: "Error getting user data..."
           });
      });
@@ -238,7 +234,7 @@ const listUserPerPage = (request, response) =>
           {
                return response.status(404).send
                ({
-                    status: "Error",
+                    status: 'Error',
                     error: error,
                     message: "No users avaliable..."
                     
@@ -260,12 +256,180 @@ const listUserPerPage = (request, response) =>
      {
           return response.status(500).send
           ({
-               status: "Error",
-               error: error,
-               message: "Query error..."
+               status: 'Error',
+               message: 'Query error...'
                
           });
      });
 }
 
-module.exports = { testUser, registerUser, loginUser, getUser, listUserPerPage };
+const updateUser = (request, response) =>
+{
+     // Get user info to update
+     let userIdentity = request.user;
+     let userToUpdate = request.body;
+
+     // Delete fields that we don't need
+     delete userToUpdate.iat;
+     delete userToUpdate.exp;
+     delete userToUpdate.role;
+     delete userToUpdate.image;
+
+     User.find
+     ({
+          $or: 
+          [
+               {email: userToUpdate.email.toLowerCase()},
+               {nick: userToUpdate.nick.toLowerCase()}
+          ]
+     }).then(async (users) =>
+     {
+          let userIsset = false;
+
+          users.forEach(user =>
+          {
+               if(user && user._id != userIdentity.id)
+               {
+                    userIsset = true;
+               }
+          });
+          if(userIsset)
+          {
+               return response.status(200).send
+               ({
+                    status: 'Success',
+                    message: 'The user already exists'
+               });
+          }
+
+          // Encode password
+          if(userToUpdate.password)
+          {
+               let pwd = await bcrypt.hash(userToUpdate.password, 10);
+               userToUpdate.password = pwd;
+          }
+
+          User.findByIdAndUpdate(userIdentity.id, userToUpdate, {new: true}).then((userUpdated)=> 
+          {
+               if(!userUpdated)
+               {
+                    return response.status(404).json
+               ({
+                    status: 'Error',
+                    error: error,
+                    message: "Error updating user"
+               });
+               }
+               return response.status(200).send
+               ({
+                    status: 'Success',
+                    message: 'User updated',
+                    user: userUpdated
+               });
+          }).catch((error) =>
+          {
+               return response.status(404).json
+               ({
+                    status: 'Error',
+                    message: "Error finding user to update"
+               });
+          });
+     }).catch((error) =>
+     {
+          return response.status(500).json
+          ({
+               status: 'Error',
+               message: "User not found..."
+          });
+     });
+}
+
+
+
+// Same but using async and await
+/*
+const updateUser = (request, response) =>
+{
+     // Get user info to update
+     let userIdentity = request.user;
+     let userToUpdate = request.body;
+
+     // Delete fields that we don't need
+     delete userToUpdate.iat;
+     delete userToUpdate.exp;
+     delete userToUpdate.role;
+     delete userToUpdate.image;
+
+     User.find
+     ({
+          $or: 
+          [
+               {email: userToUpdate.email.toLowerCase()},
+               {nick: userToUpdate.nick.toLowerCase()}
+          ]
+     }).then(async (users) =>
+     {
+          let userIsset = false;
+
+          users.forEach(user =>
+          {
+               if(user && user._id != userIdentity.id)
+               {
+                    userIsset = true;
+               }
+          });
+          if(userIsset)
+          {
+               return response.status(200).send
+               ({
+                    status: 'Success',
+                    message: 'The user already exists'
+               });
+          }
+
+          // Encode password
+          if(userToUpdate.password)
+          {
+               let pwd = await bcrypt.hash(userToUpdate.password, 10);
+               userToUpdate.password = pwd;
+          }
+
+          try
+          {
+               let userUpdated = await User.findByIdAndUpdate(userIdentity.id, userToUpdate, {new: true});
+
+               if(!userUpdated)
+               {
+                    return response.status(400).json
+                    ({
+                         status: 'Error',
+                         message: "There is no user to update..."
+                    });
+               }
+               return response.status(200).send
+               ({
+                    status: 'Success',
+                    message: 'User updated',
+                    user: userUpdated
+               });
+          }
+          catch(error)
+          {
+               return response.status(500).json
+                    ({
+                         status: 'Error',
+                         message: "Error trying to update user"
+                    });
+          }
+     }).catch((error) =>
+     {
+          return response.status(500).json
+          ({
+               status: 'Error',
+               message: "User not found..."
+          });
+     });
+}
+*/
+
+module.exports = { testUser, registerUser, loginUser, getUser, listUserPerPage, updateUser };

@@ -57,7 +57,6 @@ const registerUser = (request, response) =>
           });
      }
       
-
      User.find
      ({
           $or: 
@@ -79,9 +78,9 @@ const registerUser = (request, response) =>
           let pwd = await bcrypt.hash(params.password, 10);
           params.password = pwd;
 
-          // Check duplicates
-          
+          // Check duplicates    
           let userToSave = new User(params);
+
           // Save user in database and return response
           userToSave.save().then((userStored) =>
           {
@@ -197,7 +196,6 @@ const getUser = (request, response) =>
                });
           }
           // Return response
-
           // Next -> get follows info
 
           return response.status(200).send
@@ -251,7 +249,6 @@ const listUserPerPage = (request, response) =>
                total: totalUsers,
                pages: Math.ceil(totalUsers/itemsPerPage)
           });
-
      }).catch(() =>
      {
           return response.status(500).send
@@ -343,94 +340,6 @@ const updateUser = (request, response) =>
      });
 }
 
-
-
-// Same but using async and await
-/*
-const updateUser = (request, response) =>
-{
-     // Get user info to update
-     let userIdentity = request.user;
-     let userToUpdate = request.body;
-
-     // Delete fields that we don't need
-     delete userToUpdate.iat;
-     delete userToUpdate.exp;
-     delete userToUpdate.role;
-     delete userToUpdate.image;
-
-     User.find
-     ({
-          $or: 
-          [
-               {email: userToUpdate.email.toLowerCase()},
-               {nick: userToUpdate.nick.toLowerCase()}
-          ]
-     }).then(async (users) =>
-     {
-          let userIsset = false;
-
-          users.forEach(user =>
-          {
-               if(user && user._id != userIdentity.id)
-               {
-                    userIsset = true;
-               }
-          });
-          if(userIsset)
-          {
-               return response.status(200).send
-               ({
-                    status: 'Success',
-                    message: 'The user already exists'
-               });
-          }
-
-          // Encode password
-          if(userToUpdate.password)
-          {
-               let pwd = await bcrypt.hash(userToUpdate.password, 10);
-               userToUpdate.password = pwd;
-          }
-
-          try
-          {
-               let userUpdated = await User.findByIdAndUpdate(userIdentity.id, userToUpdate, {new: true});
-
-               if(!userUpdated)
-               {
-                    return response.status(400).json
-                    ({
-                         status: 'Error',
-                         message: "There is no user to update..."
-                    });
-               }
-               return response.status(200).send
-               ({
-                    status: 'Success',
-                    message: 'User updated',
-                    user: userUpdated
-               });
-          }
-          catch()
-          {
-               return response.status(500).json
-                    ({
-                         status: 'Error',
-                         message: "Error trying to update user"
-                    });
-          }
-     }).catch(() =>
-     {
-          return response.status(500).json
-          ({
-               status: 'Error',
-               message: "User not found..."
-          });
-     });
-}
-*/
-
 const uploadImage = (request, response) =>
 {
      // Get image file and check exists
@@ -487,7 +396,7 @@ const uploadImage = (request, response) =>
                     status: 'Error',
                     message: 'Error finding user to update...'
                });
-          })
+          });
      }
 }
 

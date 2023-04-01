@@ -90,7 +90,6 @@ const registerUser = (request, response) =>
                     return response.status(500).json
                     ({
                          status: 'Error',
-                         error: error,
                          message: 'User to stored is not exist...'
                     });
                }
@@ -100,7 +99,7 @@ const registerUser = (request, response) =>
                     message: 'User stored successfuly!',
                     user: userStored
                });
-          }).catch((error) =>
+          }).catch(() =>
           {
                return response.status(500).json
                ({
@@ -108,7 +107,7 @@ const registerUser = (request, response) =>
                     message: 'User was not saved...'
                });
           });
-     }).catch((error) =>
+     }).catch(() =>
      {
           return response.status(500).json
           ({
@@ -171,7 +170,7 @@ const loginUser = (request, response) =>
                },
                token
           });
-     }).catch((error) => 
+     }).catch(() => 
      {
           return response.status(404).send
                ({
@@ -206,7 +205,7 @@ const getUser = (request, response) =>
                status: 'Success',
                user: user
           });
-     }).catch((error) =>
+     }).catch(() =>
      {
           return response.status(404).send
           ({
@@ -237,7 +236,6 @@ const listUserPerPage = (request, response) =>
                return response.status(404).send
                ({
                     status: 'Error',
-                    error: error,
                     message: "No users avaliable..."
                     
                });
@@ -254,7 +252,7 @@ const listUserPerPage = (request, response) =>
                pages: Math.ceil(totalUsers/itemsPerPage)
           });
 
-     }).catch((error) =>
+     }).catch(() =>
      {
           return response.status(500).send
           ({
@@ -318,7 +316,6 @@ const updateUser = (request, response) =>
                     return response.status(404).json
                ({
                     status: 'Error',
-                    error: error,
                     message: "Error updating user"
                });
                }
@@ -328,7 +325,7 @@ const updateUser = (request, response) =>
                     message: 'User updated',
                     user: userUpdated
                });
-          }).catch((error) =>
+          }).catch(() =>
           {
                return response.status(404).json
                ({
@@ -336,7 +333,7 @@ const updateUser = (request, response) =>
                     message: "Error finding user to update"
                });
           });
-     }).catch((error) =>
+     }).catch(() =>
      {
           return response.status(500).json
           ({
@@ -415,7 +412,7 @@ const updateUser = (request, response) =>
                     user: userUpdated
                });
           }
-          catch(error)
+          catch()
           {
                return response.status(500).json
                     ({
@@ -423,7 +420,7 @@ const updateUser = (request, response) =>
                          message: "Error trying to update user"
                     });
           }
-     }).catch((error) =>
+     }).catch(() =>
      {
           return response.status(500).json
           ({
@@ -515,11 +512,7 @@ const getAvatar = (request, response) =>
           }
           // Return file
           return response.sendFile(path.resolve(filePath)); // <-- ABSOLUTE PATH require('path')
-     });
-
-     
-
-       
+     });  
 }
 
 module.exports = { testUser, registerUser, loginUser, getUser, listUserPerPage, updateUser, uploadImage, getAvatar };

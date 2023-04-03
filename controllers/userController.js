@@ -49,7 +49,7 @@ const registerUser = (request, response) =>
      // Check data validator
      if(!params.name || !params.nick || !params.email || !params.password)
      {
-          return response.status(400).json
+          return response.status(404).json
           ({
                status: 'Error',
                message: 'Missing data...',
@@ -86,7 +86,7 @@ const registerUser = (request, response) =>
           {
                if(!userStored)
                {
-                    return response.status(500).json
+                    return response.status(404).json
                     ({
                          status: 'Error',
                          message: 'User to stored is not exist...'
@@ -122,7 +122,7 @@ const loginUser = (request, response) =>
      let params = request.body;
      if(!params.email || !params.password)
      {
-          return response.status(400).send
+          return response.status(404).send
           ({
                status: 'Error',
                message: 'Missing data to send'
@@ -146,7 +146,7 @@ const loginUser = (request, response) =>
           const pwd = bcrypt.compareSync(params.password, user.password);
           if(!pwd)
           {
-               return response.status(400).send
+               return response.status(404).send
                ({
                     status: 'Error',
                     message: 'Password incorrect...'
@@ -171,7 +171,7 @@ const loginUser = (request, response) =>
           });
      }).catch(() => 
      {
-          return response.status(404).send
+          return response.status(500).send
                ({
                     status: 'Error',
                     message: 'Login error',
@@ -205,7 +205,7 @@ const getUser = (request, response) =>
           });
      }).catch(() =>
      {
-          return response.status(404).send
+          return response.status(500).send
           ({
               status: 'Error',
               message: "Error getting user data..."
@@ -306,7 +306,7 @@ const updateUser = (request, response) =>
                userToUpdate.password = pwd;
           }
 
-          User.findByIdAndUpdate(userIdentity.id, userToUpdate, {new: true}).then((userUpdated)=> 
+          User.findByIdAndUpdate({_id: userIdentity.id}, userToUpdate, {new: true}).then((userUpdated)=> 
           {
                if(!userUpdated)
                {
@@ -324,7 +324,7 @@ const updateUser = (request, response) =>
                });
           }).catch(() =>
           {
-               return response.status(404).json
+               return response.status(500).json
                ({
                     status: 'Error',
                     message: "Error finding user to update"
@@ -345,7 +345,7 @@ const uploadImage = (request, response) =>
      // Get image file and check exists
      if(!request.file)
      {
-          return response.status(400).send
+          return response.status(404).send
           ({
                status: 'Error',
                message: 'Request without image file...',
@@ -373,11 +373,11 @@ const uploadImage = (request, response) =>
      else
      {
           // Save image in database
-          User.findOneAndUpdate(request.user.id, {image: request.file.filename}, {new: true}).then((userUpdated) =>
+          User.findOneAndUpdate({_id: request.user.id}, {image: request.file.filename}, {new: true}).then((userUpdated) =>
           {
                if(!userUpdated)
                {
-                    return response.status(400).send
+                    return response.status(404).send
                     ({
                          status: 'Error',
                          message: 'User to update is empty...'
@@ -411,14 +411,23 @@ const getAvatar = (request, response) =>
      // Check image exists
      fs.stat(filePath, (error, exists) =>
      {
+          if(error)
+          {
+               return response.status(500).send
+               ({
+                    status: 'Error',
+                    message: 'Error checking image...'
+               });
+          }
           if(!exists)
           {
-               return response.status(400).send
+               return response.status(404).send
                ({
                     status: 'Error',
                     message: 'File is not exists...'
                });
           }
+          
           // Return file
           return response.sendFile(path.resolve(filePath)); // <-- ABSOLUTE PATH require('path')
      });  

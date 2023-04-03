@@ -24,9 +24,11 @@
 
 const express = require('express');
 const router = express.Router();
+const check = require('../middelwares/auth');
 const FollowController = require('../controllers/followController');
 
 // define routes
 router.get('/testFollow', FollowController.testFollow);
+router.post('/saveFollow', check.auth, FollowController.saveFollow);
 
 module.exports = router;

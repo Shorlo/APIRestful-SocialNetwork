@@ -31,7 +31,7 @@ const FollowSchema = Schema
           type: Schema.ObjectId,
           ref: 'User'
     },
-    followed:
+    following:
     {
           type: Schema.ObjectId,
           ref: 'User'

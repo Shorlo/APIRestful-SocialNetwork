@@ -34,8 +34,48 @@ const testFollow = (request, response) =>
      });  
 }
 
-// Save follow
+// saveFollow
+const saveFollow = (request, response) =>
+{
+     // Get data from body
+     const params = request.body;
 
+     // Get user followd id
+     const followedIdentity = request.user;
+
+     // Create object with model follow
+     let userToFollow = new Follow
+     ({
+          user: followedIdentity.id,
+          following: params.following
+     });
+     // Save object in database
+     userToFollow.save().then((followStored) =>
+     {
+          if(!followStored)
+          {
+               return response.status(404).send
+               ({
+                    status: 'Error',
+                    message: 'No follow to storage'
+               });
+          }
+          return response.status(200).send
+          ({
+               status: 'Success',
+               identity: request.user,
+               follow: followStored
+          });
+     }).catch(() =>
+     {
+          return response.status(500).send
+               ({
+                    status: 'Error',
+                    message: 'No follow to storage'
+               });
+     });
+
+}
 // Delete follow
 
 // List follow users
@@ -44,4 +84,4 @@ const testFollow = (request, response) =>
 
 
 
-module.exports = { testFollow };
+module.exports = { testFollow, saveFollow };

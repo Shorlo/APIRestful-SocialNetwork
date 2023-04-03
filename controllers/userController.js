@@ -424,4 +424,14 @@ const getAvatar = (request, response) =>
      });  
 }
 
-module.exports = { testUser, registerUser, loginUser, getUser, listUserPerPage, updateUser, uploadImage, getAvatar };
+module.exports =
+{
+     testUser,
+     registerUser,
+     loginUser,
+     getUser,
+     listUserPerPage,
+     updateUser,
+     uploadImage,
+     getAvatar
+};

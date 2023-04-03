@@ -22,6 +22,9 @@
 |                                                                               |
 '==============================================================================*/
 
+const Follow = require('../models/Follow');
+const User = require('../models/User');
+
 // test actions
 const testFollow = (request, response) => 
 {
@@ -30,5 +33,15 @@ const testFollow = (request, response) =>
           message: 'Message sent from: controllers/follow.js'
      });  
 }
+
+// Save follow
+
+// Delete follow
+
+// List follow users
+
+// List folowers
+
+
 
 module.exports = { testFollow };

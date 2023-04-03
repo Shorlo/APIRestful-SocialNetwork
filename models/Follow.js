@@ -21,3 +21,26 @@
 |   with this program. If not, see <http://www.gnu.org/licenses/>.              |
 |                                                                               |
 '==============================================================================*/
+
+const {Schema, model} = require('mongoose');
+
+const FollowSchema = Schema
+({
+    user: 
+    {
+          type: Schema.ObjectId,
+          ref: 'User'
+    },
+    followed:
+    {
+          type: Schema.ObjectId,
+          ref: 'User'
+    },
+    create_at:
+    {
+        type: Date,
+        default: Date.now
+    }
+});
+                        
+module.exports = model('Follow', FollowSchema, 'follows'); //'MODEL_NAME, MODEL_SCHEMA, COLLECTION_MODEL_DATABASE

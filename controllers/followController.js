@@ -22,6 +22,7 @@
 |                                                                               |
 '==============================================================================*/
 
+const { response } = require('express');
 const Follow = require('../models/Follow');
 const User = require('../models/User');
 
@@ -47,7 +48,7 @@ const saveFollow = (request, response) =>
      let userToFollow = new Follow
      ({
           user: followedIdentity.id,
-          following: params.following
+          followed: params.followed
      });
      // Save object in database
      userToFollow.save().then((followStored) =>
@@ -69,19 +70,52 @@ const saveFollow = (request, response) =>
      }).catch(() =>
      {
           return response.status(500).send
-               ({
-                    status: 'Error',
-                    message: 'No follow to storage'
-               });
+          ({
+               status: 'Error',
+               message: 'No follow to storage'
+          });
      });
 
 }
 // Delete follow
+const unfollow = (request, response) =>
+{
+     // Get id identify user
+     const userId = request.user.id;
+     
+     // Get id of user to unfollow
+     const followedId = request.params.id;
 
+     // Find coincidences and remove
+     Follow.findOneAndDelete({ user: userId, followed: followedId }).then((followDeleted) =>
+     { 
+          if(!followDeleted)
+          {
+               return response.status(404).send
+               ({
+                    status: 'Error',
+                    message: 'Followed not found...'
+               });
+          }
+          return response.status(200).send
+          ({
+               status: 'Success',
+               message: 'Follow deleted successfuly',
+
+          });
+     }).catch(() =>
+     {
+          return response.status(500).send
+          ({
+               status: 'Error',
+               message: 'Error removing followed'
+          });
+     }); 
+}
 // List follow users
 
 // List folowers
 
 
 
-module.exports = { testFollow, saveFollow };
+module.exports = { testFollow, saveFollow, unfollow };

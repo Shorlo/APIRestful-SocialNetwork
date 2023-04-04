@@ -27,8 +27,10 @@ const router = express.Router();
 const check = require('../middelwares/auth');
 const FollowController = require('../controllers/followController');
 
+
 // define routes
 router.get('/testFollow', FollowController.testFollow);
 router.post('/saveFollow', check.auth, FollowController.saveFollow);
+router.delete('/unfollow/:id', check.auth, FollowController.unfollow);
 
 module.exports = router;

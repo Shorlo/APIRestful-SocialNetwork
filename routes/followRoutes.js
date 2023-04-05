@@ -32,5 +32,7 @@ const FollowController = require('../controllers/followController');
 router.get('/testFollow', FollowController.testFollow);
 router.post('/saveFollow', check.auth, FollowController.saveFollow);
 router.delete('/unfollow/:id', check.auth, FollowController.unfollow);
+router.get('/listFollowing/:id?/:page?', check.auth, FollowController.listFollowing);
+router.get('/listFollowers/:id?/:page?', check.auth, FollowController.listFollowers);
 
 module.exports = router;

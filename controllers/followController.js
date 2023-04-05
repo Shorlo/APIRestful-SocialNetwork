@@ -25,6 +25,7 @@
 const { response } = require('express');
 const Follow = require('../models/Follow');
 const User = require('../models/User');
+const mongoosePagination = require('mongoose-pagination');
 
 // test actions
 const testFollow = (request, response) => 
@@ -113,9 +114,59 @@ const unfollow = (request, response) =>
      }); 
 }
 // List follow users
+const listFollowing = (request, response) =>
+{
+     // Get current user id
+     let userId = request.user.id;
+
+     // Check if there is a id by params url
+     if(request.params.id)
+     {
+         userId = request.params.id; 
+     }
+
+     //check if there is a page by params url
+     let page = 1;
+
+     if(request.params.page)
+     {
+          page = request.params.page;
+     }
+
+     // Users per page to show
+     const itemsPerPage = 5;
+
+     // Find data in database
+     Follow.find({user: userId}).populate('user followed').then((follows)=> 
+     {
+          return response.status(200).send
+          ({
+               status: 'Success',
+               message: 'List of following',
+               follows
+          });
+     }).catch(() =>
+     {
+          return response.status(500).send
+          ({
+               status: 'Error',
+               message: 'Error getting list of following...',
+          });
+     });
+
+
+     
+}
 
 // List folowers
+const listFollowers = (request, response) =>
+{
+     return response.status(200).send
+     ({
+          status: 'Success',
+          message: 'List of followers'
 
+     });
+}
 
-
-module.exports = { testFollow, saveFollow, unfollow };
+module.exports = { testFollow, saveFollow, unfollow, listFollowing, listFollowers };

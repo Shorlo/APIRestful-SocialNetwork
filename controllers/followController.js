@@ -136,14 +136,28 @@ const listFollowing = (request, response) =>
      // Users per page to show
      const itemsPerPage = 5;
 
-     // Find data in database
-     Follow.find({user: userId}).populate('user followed').then((follows)=> 
+     // Find data in database populate(FIELDS_WANTS, ATTRIBUTES_WANTS || -ATTRIBUTES_WANTS_NOT_WANTS)
+     Follow.find({user: userId}).populate('user followed', '-password -role -__v').paginate(page, itemsPerPage).then(async (follows) => 
      {
+          const totalUsers = await Follow.countDocuments({}).exec();
+             
+          if(!follows)
+          {
+               return response.status(404).send
+               ({
+                    status: 'Error',
+                    message: 'No followed found...',
+               });
+          }
+          
           return response.status(200).send
           ({
                status: 'Success',
                message: 'List of following',
-               follows
+               total: totalUsers,
+               follows,
+               pages: Math.ceil(totalUsers/itemsPerPage)
+               
           });
      }).catch(() =>
      {
@@ -153,9 +167,6 @@ const listFollowing = (request, response) =>
                message: 'Error getting list of following...',
           });
      });
-
-
-     
 }
 
 // List folowers

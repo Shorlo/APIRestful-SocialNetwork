@@ -26,6 +26,7 @@ const { response } = require('express');
 const Follow = require('../models/Follow');
 const User = require('../models/User');
 const mongoosePagination = require('mongoose-pagination');
+const followService = require('../services/followService');
 
 // test actions
 const testFollow = (request, response) => 
@@ -136,11 +137,12 @@ const listFollowing = (request, response) =>
      // Users per page to show
      const itemsPerPage = 5;
 
-     // Find data in database populate(FIELDS_WANTS, ATTRIBUTES_WANTS || -ATTRIBUTES_WANTS_NOT_WANTS)
+     // Find data in database populate(FIELDS_WANTS, ATTRIBUTES_WANTS || -ATTRIBUTES_WANTS_OR_NOT_WANTS)
      Follow.find({user: userId}).populate('user followed', '-password -role -__v').paginate(page, itemsPerPage).then(async (follows) => 
      {
           const totalUsers = await Follow.countDocuments({}).exec();
-             
+          let followUserIds = await followService.followUserIds(request.user.id);
+          
           if(!follows)
           {
                return response.status(404).send
@@ -156,7 +158,9 @@ const listFollowing = (request, response) =>
                message: 'List of following',
                total: totalUsers,
                follows,
-               pages: Math.ceil(totalUsers/itemsPerPage)
+               pages: Math.ceil(totalUsers/itemsPerPage),
+               usersFollowing: followUserIds.following,
+               userFollowingMe: followUserIds.followers
                
           });
      }).catch(() =>
@@ -164,7 +168,7 @@ const listFollowing = (request, response) =>
           return response.status(500).send
           ({
                status: 'Error',
-               message: 'Error getting list of following...',
+               message: 'Error getting list of following...', 
           });
      });
 }
@@ -176,7 +180,6 @@ const listFollowers = (request, response) =>
      ({
           status: 'Success',
           message: 'List of followers'
-
      });
 }
 

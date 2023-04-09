@@ -29,6 +29,7 @@ const { response, request } = require('express');
 const User = require('../models/User');
 const jwt = require('../services/jwt');
 const mongoosePagination = require('mongoose-pagination');
+const followService = require('../services/followService');
 
 // Test actions
 const testUser = (request, response) => 
@@ -185,7 +186,7 @@ const getUser = (request, response) =>
      const idUser = request.params.id;
 
      // Query to get user from database
-     User.findById(idUser).select({password: 0, role: 0 }).then((user) =>
+     User.findById(idUser).select({password: 0, role: 0 }).then(async (user) =>
      {
           if(!user)
           {
@@ -195,13 +196,16 @@ const getUser = (request, response) =>
                     message: 'User not found...'
                });
           }
-          // Return response
-          // Next -> get follows info
+
+          // Get follow info
+          const followInfo = await followService.followThisUser(request.user.id, idUser);
 
           return response.status(200).send
           ({
                status: 'Success',
-               user: user
+               user: user,
+               following: followInfo.following,
+               follower: followInfo.follower
           });
      }).catch(() =>
      {

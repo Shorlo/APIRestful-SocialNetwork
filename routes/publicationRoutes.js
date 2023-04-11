@@ -31,5 +31,6 @@ const PublicationController = require('../controllers/publicationController');
 // define routes
 router.get('/testPublication', PublicationController.testPublication);
 router.post('/savePublication', check.auth, PublicationController.savePublication);
+router.get('/getPublicationById/:id', check.auth, PublicationController.getPublicationById);
 
 module.exports = router;

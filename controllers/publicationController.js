@@ -22,7 +22,7 @@
 |                                                                               |
 '==============================================================================*/
 
-const { response } = require('express');
+const { response, request } = require('express');
 const Publication = require('../models/Publication');
 const { param } = require('../routes/followRoutes');
 
@@ -83,6 +83,40 @@ const savePublication = (request, response) =>
 }
 
 // Get a publication
+const getPublicationById = (request, response) =>
+{
+     // Get id of publication url
+     const publicationId = request.params.id;
+
+     // Find publication
+     Publication.findById(publicationId).then((publicationStored) => 
+     {
+          if(!publicationStored)
+          {
+               return response.status(400).send
+               ({
+                    status: 'Error',
+                    message: 'Publication not exists...'
+               });
+          }
+
+          return response.status(200).send
+          ({
+               status: 'Success',
+               message: 'Get One Publication',
+               publication: publicationStored
+          });
+     }).catch(() =>
+     {
+          return response.status(500).json
+          ({
+               status: 'Error',
+               message: 'Error finding the publication...'
+          });
+     });
+
+     
+}
 
 // Delete publications
 
@@ -98,5 +132,6 @@ const savePublication = (request, response) =>
 module.exports = 
 {
      testPublication,
-     savePublication
+     savePublication,
+     getPublicationById
 };

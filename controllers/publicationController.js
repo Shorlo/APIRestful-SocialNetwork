@@ -22,6 +22,8 @@
 |                                                                               |
 '==============================================================================*/
 
+const Publication = require('../models/Publication');
+
 // test actions
 const testPublication = (request, response) => 
 {

@@ -243,6 +243,9 @@ const listUserPerPage = (request, response) =>
                });
           }
 
+          // Get follow info
+          let followUserIds = await followService.followUserIds(request.user.id);
+          
           // Return response
           return response.status(200).send
           ({
@@ -251,7 +254,9 @@ const listUserPerPage = (request, response) =>
                page,
                itemsPerPage,
                total: totalUsers,
-               pages: Math.ceil(totalUsers/itemsPerPage)
+               pages: Math.ceil(totalUsers/itemsPerPage),
+               usersFollowing: followUserIds.following,
+               userFollowingMe: followUserIds.followers
           });
      }).catch(() =>
      {

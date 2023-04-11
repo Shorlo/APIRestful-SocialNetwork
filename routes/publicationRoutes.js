@@ -24,9 +24,12 @@
 
 const express = require('express');
 const router = express.Router();
+const check = require('../middelwares/auth');
 const PublicationController = require('../controllers/publicationController');
+
 
 // define routes
 router.get('/testPublication', PublicationController.testPublication);
+router.post('/savePublication', check.auth, PublicationController.savePublication);
 
 module.exports = router;

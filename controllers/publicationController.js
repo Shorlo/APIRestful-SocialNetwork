@@ -22,7 +22,9 @@
 |                                                                               |
 '==============================================================================*/
 
+const { response } = require('express');
 const Publication = require('../models/Publication');
+const { param } = require('../routes/followRoutes');
 
 // test actions
 const testPublication = (request, response) => 
@@ -34,6 +36,51 @@ const testPublication = (request, response) =>
 }
 
 // Save publication
+const savePublication = (request, response) =>
+{
+     // Get data from body
+     const params = request.body;
+
+     // No data resturn 400
+     if(!params.text)
+     {
+          return response.status(400).send
+          ({
+               status: 'Error',
+               message: 'You must to send publication text.'
+          });
+     }
+     // Create and fill model object
+     let newPublication = new Publication(params);
+     newPublication.user = request.user.id;
+
+     // Save Object in database
+     newPublication.save().then((publicationStored) => 
+     {
+          if(!publicationStored)
+          {
+               return response.status(400).send
+               ({
+                    status: 'Error',
+                    message: 'Publication not stored...'
+               });
+          }
+          return response.status(200).send
+          ({
+               status: 'Success',
+               message: 'Publication saved successfuly',
+               publicationStored
+          });
+
+     }).catch(() =>
+     {
+          return response.status(500).json
+          ({
+               status: 'Error',
+               message: 'Publication not saved...'
+          });
+     });
+}
 
 // Get a publication
 
@@ -48,4 +95,8 @@ const testPublication = (request, response) =>
 // Get files
 
 
-module.exports = { testPublication };
+module.exports = 
+{
+     testPublication,
+     savePublication
+};

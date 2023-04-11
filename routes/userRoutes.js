@@ -24,9 +24,10 @@
 
 const express = require('express');
 const router = express.Router();
+const check = require('../middelwares/auth');
 const multer= require('multer');
 const UserController = require('../controllers/userController');
-const check = require('../middelwares/auth');
+
 
 // Upload multer files
 const storage = multer.diskStorage

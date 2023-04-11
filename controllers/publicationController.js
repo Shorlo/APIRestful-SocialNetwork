@@ -33,4 +33,19 @@ const testPublication = (request, response) =>
      });  
 }
 
+// Save publication
+
+// Get a publication
+
+// Delete publications
+
+// List all publications
+
+// List a user publication
+
+// Upload files
+
+// Get files
+
+
 module.exports = { testPublication };

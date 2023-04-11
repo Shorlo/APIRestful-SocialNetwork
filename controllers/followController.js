@@ -176,10 +176,59 @@ const listFollowing = (request, response) =>
 // List folowers
 const listFollowers = (request, response) =>
 {
-     return response.status(200).send
-     ({
-          status: 'Success',
-          message: 'List of followers'
+     // Get current user id
+     let userId = request.user.id;
+
+     // Check if there is a id by params url
+     if(request.params.id)
+     {
+         userId = request.params.id; 
+     }
+
+     //check if there is a page by params url
+     let page = 1;
+
+     if(request.params.page)
+     {
+          page = request.params.page;
+     }
+
+     // Users per page to show
+     const itemsPerPage = 5;
+
+     // Find data in database populate(FIELDS_WANTS, ATTRIBUTES_WANTS || -ATTRIBUTES_WANTS_OR_NOT_WANTS)
+     Follow.find({followed: userId}).populate('user', '-password -role -__v').paginate(page, itemsPerPage).then(async (follows) => 
+     {
+          const totalUsers = await Follow.countDocuments({}).exec();
+          let followUserIds = await followService.followUserIds(request.user.id);
+          
+          if(!follows)
+          {
+               return response.status(404).send
+               ({
+                    status: 'Error',
+                    message: 'No followers found...',
+               });
+          }
+          
+          return response.status(200).send
+          ({
+               status: 'Success',
+               message: 'List of followers',
+               total: totalUsers,
+               follows,
+               pages: Math.ceil(totalUsers/itemsPerPage),
+               usersFollowing: followUserIds.following,
+               userFollowingMe: followUserIds.followers
+               
+          });
+     }).catch(() =>
+     {
+          return response.status(500).send
+          ({
+               status: 'Error',
+               message: 'Error getting list of followers...', 
+          });
      });
 }
 

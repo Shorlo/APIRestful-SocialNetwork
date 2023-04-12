@@ -24,9 +24,23 @@
 
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
 const check = require('../middelwares/auth');
 const PublicationController = require('../controllers/publicationController');
 
+// Upload multer files
+const storage = multer.diskStorage
+({
+     destination: (request, file, cb) =>
+     {
+          cb(null, './uploads/publications/');
+     },
+     filename: (request, file, cb) =>
+     {
+          cb(null, 'publication-'+Date.now()+'-'+file.originalname);
+     }
+});
+const uploads = multer({storage});
 
 // define routes
 router.get('/testPublication', PublicationController.testPublication);
@@ -34,5 +48,6 @@ router.post('/savePublication', check.auth, PublicationController.savePublicatio
 router.get('/getPublicationById/:id', check.auth, PublicationController.getPublicationById);
 router.delete('/deletePublicationById/:id', check.auth, PublicationController.deletePublicationById);
 router.get('/listPublicationsByIdUser/:id/:page?', check.auth, PublicationController.listPublicationsByIdUser);
+router.post('/uploadPublicationImage/:id', [check.auth, uploads.single('filePublication')], PublicationController.uploadPublicationImage);
 
 module.exports = router;

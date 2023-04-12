@@ -149,7 +149,8 @@ const deletePublicationById = (request, response) =>
           });
      });
 }
-// List all publications
+
+// List user publications
 const listPublicationsByIdUser = (request, response) =>
 {
      // Get userId
@@ -195,11 +196,72 @@ const listPublicationsByIdUser = (request, response) =>
      });
 }
 
-// List a user publication
-
 // Upload files
+const uploadPublicationImage = (request, response) =>
+{
+     // Get publication id
+     const publicationId = request.params.id;
 
+     // Get image file and check exists
+     if(!request.file)
+     {
+          return response.status(404).send
+          ({
+               status: 'Error',
+               message: 'Request without image file...',
+
+          });
+     }
+
+     // Get file name
+     const imageFile = request.file.originalname;
+
+     // Get extension file
+     const extensionFile = imageFile.split('.')[1];
+     
+     // If file is not image delete
+     if(extensionFile != 'png' && extensionFile != 'jpeg' && extensionFile != 'jpg' && extensionFile != 'gif' && extensionFile != 'PNG' && extensionFile != 'JPEG' && extensionFile != 'JPG' && extensionFile != 'GIF')
+     {
+          // Delete file and return response.
+          fs.unlinkSync(request.file.path);
+          return response.status(400).json
+          ({
+               status: 'Error',
+               message: 'File extension invalid...',
+          });
+     }
+     else
+     {
+          // Save image in database
+          Publication.findOneAndUpdate({user: request.user.id, _id: publicationId}, {file: request.file.filename}, {new: true}).then((publicationUpdated) =>
+          {
+               if(!publicationUpdated)
+               {
+                    return response.status(404).send
+                    ({
+                         status: 'Error',
+                         message: 'Publication to update is empty...'
+                    });
+               }
+               return response.status(200).send
+               ({
+                    status: 'Success',
+                    publication: publicationUpdated,
+                    file: request.file,
+               });
+          }).catch(() =>
+          {
+               return response.status(500).send
+               ({
+                    status: 'Error',
+                    message: 'Error finding publication to update...'
+               });
+          });
+     }
+}
 // Get files
+
+// List all publications
 
 
 module.exports = 
@@ -208,5 +270,6 @@ module.exports =
      savePublication,
      getPublicationById,
      deletePublicationById,
-     listPublicationsByIdUser
+     listPublicationsByIdUser,
+     uploadPublicationImage
 };

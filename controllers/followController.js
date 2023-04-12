@@ -138,7 +138,7 @@ const listFollowing = (request, response) =>
      const itemsPerPage = 5;
 
      // Find data in database populate(FIELDS_WANTS, ATTRIBUTES_WANTS || -ATTRIBUTES_WANTS_OR_NOT_WANTS)
-     Follow.find({user: userId}).populate('user followed', '-password -role -__v').paginate(page, itemsPerPage).then(async (follows) => 
+     Follow.find({user: userId}).populate('user followed', '-password -role -__v -email').paginate(page, itemsPerPage).then(async (follows) => 
      {
           const totalUsers = await Follow.countDocuments({}).exec();
           let followUserIds = await followService.followUserIds(request.user.id);
@@ -197,7 +197,7 @@ const listFollowers = (request, response) =>
      const itemsPerPage = 5;
 
      // Find data in database populate(FIELDS_WANTS, ATTRIBUTES_WANTS || -ATTRIBUTES_WANTS_OR_NOT_WANTS)
-     Follow.find({followed: userId}).populate('user', '-password -role -__v').paginate(page, itemsPerPage).then(async (follows) => 
+     Follow.find({followed: userId}).populate('user', '-password -role -__v -email').paginate(page, itemsPerPage).then(async (follows) => 
      {
           const totalUsers = await Follow.countDocuments({}).exec();
           let followUserIds = await followService.followUserIds(request.user.id);

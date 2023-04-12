@@ -26,6 +26,7 @@ const { response, request } = require('express');
 const fs = require('fs');
 const path = require('path');
 const Publication = require('../models/Publication');
+const followService = require('../services/followService');
 
 
 // test actions
@@ -167,7 +168,7 @@ const listPublicationsByIdUser = (request, response) =>
      
      // Find, populate, order by new publication and pagination
      const itemsPerPage = 5;
-     Publication.find({'user': userId}).sort('-create_at').populate('user', '-password -__v -role').paginate(page, itemsPerPage).then(async(publications) =>
+     Publication.find({'user': userId}).sort('-create_at').populate('user', '-password -__v -role -email').paginate(page, itemsPerPage).then(async(publications) =>
      {
           const totalPublications = await Publication.countDocuments({}).exec();
 
@@ -296,8 +297,59 @@ const getPublicationImage = (request, response) =>
      });  
 }
 
-// List all publications
+// List all publications of followed
+const feeds = async (request, response) =>
+{
+     // Get current page
+     let page = 1;
+     if(request.params.page)
+     {
+          page = request.params.page;
+     }
+     
+     // Number os items per page
+     const itemsPerPage = 5;
 
+     // Get array of users id that I follow
+     try
+     {
+          const myFollows = await followService.followUserIds(request.user.id);
+
+          // Find publication in, order, pupulate and pagination
+          const publicationsFeeds = await Publication.find({user: myFollows.following}).populate('user', '-password -__v -role -email').sort('-create_at').paginate(page, itemsPerPage);
+          
+          // Check total feeds array - not sure that is getting all feeds from all users or only follows users
+          const totalFeeds = await Publication.countDocuments({}).exec();
+
+          if(!publicationsFeeds || publicationsFeeds <= 0)
+          {
+               return response.status(404).send
+               ({
+                    status: 'Error',
+                    message: 'No publications feed found...'
+               });
+          }
+
+          return response.status(200).send
+          ({
+               status: 'Success',
+               myFollows: myFollows.following,
+               page: page,
+               pages: Math.ceil(totalFeeds/itemsPerPage),
+               itemsPerPage: itemsPerPage,
+               totalFeeds: totalFeeds,
+               publicationsFeeds: publicationsFeeds
+          });
+     }
+     catch(error)
+     {
+          return response.status(500).send
+          ({
+               status: 'Error',
+               message: 'Error getting myfollows publications...'
+          });
+     }
+}
 
 module.exports = 
 {
@@ -307,5 +359,6 @@ module.exports =
      deletePublicationById,
      listPublicationsByIdUser,
      uploadPublicationImage,
-     getPublicationImage
+     getPublicationImage,
+     feeds
 };

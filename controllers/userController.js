@@ -186,7 +186,7 @@ const getUser = (request, response) =>
      const idUser = request.params.id;
 
      // Query to get user from database
-     User.findById(idUser).select({password: 0, role: 0 }).then(async (user) =>
+     User.findById(idUser).select({password: 0, role: 0, email: 0 }).then(async (user) =>
      {
           if(!user)
           {
@@ -229,7 +229,7 @@ const listUserPerPage = (request, response) =>
      // Query mongoose pagination
      let itemsPerPage = 5;
      
-     User.find().sort('_id').paginate(page, itemsPerPage).then(async (users) =>
+     User.find().select({password: 0, role: 0, email: 0 }).sort('_id').paginate(page, itemsPerPage).then(async (users) =>
      {
           // Get total users
           const totalUsers = await User.countDocuments({}).exec();

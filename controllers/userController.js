@@ -30,6 +30,8 @@ const User = require('../models/User');
 const jwt = require('../services/jwt');
 const mongoosePagination = require('mongoose-pagination');
 const followService = require('../services/followService');
+const Follow = require('../models/Follow');
+const Publication = require('../models/Publication');
 
 // Test actions
 const testUser = (request, response) => 
@@ -315,6 +317,10 @@ const updateUser = (request, response) =>
                let pwd = await bcrypt.hash(userToUpdate.password, 10);
                userToUpdate.password = pwd;
           }
+          else
+          {
+               delete userToUpdate.password;
+          }
 
           User.findByIdAndUpdate({_id: userIdentity.id}, userToUpdate, {new: true}).then((userUpdated)=> 
           {
@@ -443,6 +449,40 @@ const getAvatar = (request, response) =>
      });  
 }
 
+const counters = async (request, response) =>
+{
+     let userId = request.user.id;
+
+     if(request.params.id)
+     {
+          userId = request.params.id;
+     }
+
+     try
+     {
+          const following = await Follow.count({'user': userId});
+          const followed = await Follow.count({'followed': userId});
+          const publications = await Publication.count({'user': userId});
+          return response.status(200).send
+          ({
+               status: 'Success',
+               userId,
+               following: following,
+               followed: followed,
+               publications: publications
+          });
+     }
+     catch(error)
+     {
+          return response.status(500).send
+          ({
+               status: 'Error',
+               message: 'Error getting counters...',
+               error
+          });
+     }
+}
+
 module.exports =
 {
      testUser,
@@ -452,5 +492,6 @@ module.exports =
      listUserPerPage,
      updateUser,
      uploadImage,
-     getAvatar
+     getAvatar,
+     counters
 };

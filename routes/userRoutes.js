@@ -27,6 +27,7 @@ const router = express.Router();
 const check = require('../middelwares/auth');
 const multer= require('multer');
 const UserController = require('../controllers/userController');
+const User = require('../models/User');
 
 // Upload multer files
 const storage = multer.diskStorage
@@ -50,6 +51,7 @@ router.get('/getUser/:id', check.auth, UserController.getUser);
 router.get('/listUserPerPage/:page?', check.auth, UserController.listUserPerPage);
 router.put('/updateUser', check.auth, UserController.updateUser);
 router.post('/uploadImage', [check.auth, uploads.single('fileAvatar')], UserController.uploadImage);
-router.get('/getAvatar/:fileAvatar', check.auth, UserController.getAvatar);
+router.get('/getAvatar/:fileAvatar', UserController.getAvatar);
+router.get('/counters/:id', check.auth, UserController.counters);
 
 module.exports = router;

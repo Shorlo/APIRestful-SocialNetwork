@@ -229,7 +229,8 @@ const listUserPerPage = (request, response) =>
      // Query mongoose pagination
      let itemsPerPage = 5;
      
-     User.find().select({password: 0, role: 0, email: 0 }).sort('_id').paginate(page, itemsPerPage).then(async (users) =>
+     //User.find().select({password: 0, role: 0, email: 0, __v: 0}).sort('_id').paginate(page, itemsPerPage).then(async (users) =>
+     User.find().select('-password -role -email -__v').sort('_id').paginate(page, itemsPerPage).then(async (users) =>
      {
           // Get total users
           const totalUsers = await User.countDocuments({}).exec();

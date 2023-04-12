@@ -113,13 +113,42 @@ const getPublicationById = (request, response) =>
                status: 'Error',
                message: 'Error finding the publication...'
           });
-     });
-
-     
+     }); 
 }
 
 // Delete publications
+const deletePublicationById = (request, response) =>
+{
+     // Get id of publication url
+     const publicationId = request.params.id;
 
+     // Find publication in database
+     Publication.findOneAndDelete({'user': request.user.id, '_id': publicationId}).then((publicationDeleted) =>
+     {
+          if(!publicationDeleted)
+          {
+               return response.status(400).send
+               ({
+                    status: 'Error',
+                    message: 'Publication to delete not found...'
+               });
+          }
+          return response.status(200).send
+          ({
+               status: 'Success',
+               message: 'Publication was deleted succesfuly',
+               publication: publicationId,
+               publicationDeleted: publicationDeleted
+          });
+     }).catch(() =>
+     {
+          return response.status(500).json
+          ({
+               status: 'Error',
+               message: 'Error finding the publication...'
+          });
+     });
+}
 // List all publications
 
 // List a user publication
@@ -133,5 +162,6 @@ module.exports =
 {
      testPublication,
      savePublication,
-     getPublicationById
+     getPublicationById,
+     deletePublicationById
 };

@@ -32,5 +32,6 @@ const PublicationController = require('../controllers/publicationController');
 router.get('/testPublication', PublicationController.testPublication);
 router.post('/savePublication', check.auth, PublicationController.savePublication);
 router.get('/getPublicationById/:id', check.auth, PublicationController.getPublicationById);
+router.delete('/deletePublicationById/:id', check.auth, PublicationController.deletePublicationById);
 
 module.exports = router;

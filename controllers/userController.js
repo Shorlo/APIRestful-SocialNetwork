@@ -25,7 +25,6 @@
 const bcrypt = require('bcrypt');
 const fs = require('fs');
 const path = require('path');
-//const { response, request } = require('express');
 const User = require('../models/User');
 const jwt = require('../services/jwt');
 const mongoosePagination = require('mongoose-pagination');

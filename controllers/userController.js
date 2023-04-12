@@ -25,13 +25,14 @@
 const bcrypt = require('bcrypt');
 const fs = require('fs');
 const path = require('path');
-const { response, request } = require('express');
+//const { response, request } = require('express');
 const User = require('../models/User');
 const jwt = require('../services/jwt');
 const mongoosePagination = require('mongoose-pagination');
 const followService = require('../services/followService');
 const Follow = require('../models/Follow');
 const Publication = require('../models/Publication');
+const validate = require('../helpers/validate');
 
 // Test actions
 const testUser = (request, response) => 
@@ -56,10 +57,23 @@ const registerUser = (request, response) =>
           ({
                status: 'Error',
                message: 'Missing data...',
-               params
           });
      }
-      
+
+     // Advance validation
+     try
+     {
+          validate(params);
+     }
+     catch(error)
+     {
+          return response.status(400).json
+          ({
+               status: 'Error',
+               message: 'Validation failed'
+          });
+     }
+     
      User.find
      ({
           $or: 

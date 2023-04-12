@@ -49,5 +49,6 @@ router.get('/getPublicationById/:id', check.auth, PublicationController.getPubli
 router.delete('/deletePublicationById/:id', check.auth, PublicationController.deletePublicationById);
 router.get('/listPublicationsByIdUser/:id/:page?', check.auth, PublicationController.listPublicationsByIdUser);
 router.post('/uploadPublicationImage/:id', [check.auth, uploads.single('filePublication')], PublicationController.uploadPublicationImage);
+router.get('/getPublicationImage/:filePublication', check.auth, PublicationController.getPublicationImage);
 
 module.exports = router;

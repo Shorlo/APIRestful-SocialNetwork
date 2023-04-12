@@ -23,8 +23,10 @@
 '==============================================================================*/
 
 const { response, request } = require('express');
+const fs = require('fs');
+const path = require('path');
 const Publication = require('../models/Publication');
-const { param } = require('../routes/followRoutes');
+
 
 // test actions
 const testPublication = (request, response) => 
@@ -196,7 +198,7 @@ const listPublicationsByIdUser = (request, response) =>
      });
 }
 
-// Upload files
+// Upload publication image
 const uploadPublicationImage = (request, response) =>
 {
      // Get publication id
@@ -259,7 +261,40 @@ const uploadPublicationImage = (request, response) =>
           });
      }
 }
-// Get files
+
+// Get publication image
+const getPublicationImage = (request, response) => 
+{
+     // Get url params for the image
+     const filePublication = request.params.filePublication;
+
+     // Build the path of real image
+     const filePath = './uploads/publications/'+filePublication;
+
+     // Check image exists
+     fs.stat(filePath, (error, exists) =>
+     {
+          if(error)
+          {
+               return response.status(500).send
+               ({
+                    status: 'Error',
+                    message: 'Error checking publication image...'
+               });
+          }
+          if(!exists)
+          {
+               return response.status(404).send
+               ({
+                    status: 'Error',
+                    message: 'File is not exists...'
+               });
+          }
+          
+          // Return file
+          return response.sendFile(path.resolve(filePath)); // <-- ABSOLUTE PATH require('path')
+     });  
+}
 
 // List all publications
 
@@ -271,5 +306,6 @@ module.exports =
      getPublicationById,
      deletePublicationById,
      listPublicationsByIdUser,
-     uploadPublicationImage
+     uploadPublicationImage,
+     getPublicationImage
 };

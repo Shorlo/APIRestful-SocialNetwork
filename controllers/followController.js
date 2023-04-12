@@ -143,7 +143,7 @@ const listFollowing = (request, response) =>
           const totalUsers = await Follow.countDocuments({}).exec();
           let followUserIds = await followService.followUserIds(request.user.id);
           
-          if(!follows)
+          if(!follows || follows.length <= 0)
           {
                return response.status(404).send
                ({
@@ -202,7 +202,7 @@ const listFollowers = (request, response) =>
           const totalUsers = await Follow.countDocuments({}).exec();
           let followUserIds = await followService.followUserIds(request.user.id);
           
-          if(!follows)
+          if(!follows || follows.length <= 0)
           {
                return response.status(404).send
                ({

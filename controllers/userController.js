@@ -233,7 +233,7 @@ const listUserPerPage = (request, response) =>
      {
           // Get total users
           const totalUsers = await User.countDocuments({}).exec();
-          if(!users)
+          if(!users || users.length <= 0)
           {
                return response.status(404).send
                ({

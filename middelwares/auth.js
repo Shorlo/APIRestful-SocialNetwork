@@ -42,6 +42,7 @@ exports.auth = (request, response, next) =>
             message: 'Header without Authentification...'
         });
     }
+    
     // Clean token
     let token = request.headers.authorization.replace(/['"]/g, '');
 
@@ -70,8 +71,6 @@ exports.auth = (request, response, next) =>
             error
         });
     }
-    
-    
 
     // Next action
     next();

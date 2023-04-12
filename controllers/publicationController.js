@@ -93,7 +93,7 @@ const getPublicationById = (request, response) =>
      {
           if(!publicationStored)
           {
-               return response.status(400).send
+               return response.status(404).send
                ({
                     status: 'Error',
                     message: 'Publication not exists...'
@@ -127,7 +127,7 @@ const deletePublicationById = (request, response) =>
      {
           if(!publicationDeleted)
           {
-               return response.status(400).send
+               return response.status(404).send
                ({
                     status: 'Error',
                     message: 'Publication to delete not found...'
@@ -150,6 +150,50 @@ const deletePublicationById = (request, response) =>
      });
 }
 // List all publications
+const listPublicationsByIdUser = (request, response) =>
+{
+     // Get userId
+     const userId = request.params.id;
+     
+     // Page control
+     let page = 1;
+     if(request.params.page)
+     {
+          page = request.params.page;
+     }
+     
+     // Find, populate, order by new publication and pagination
+     const itemsPerPage = 5;
+     Publication.find({'user': userId}).sort('-create_at').populate('user', '-password -__v -role').paginate(page, itemsPerPage).then(async(publications) =>
+     {
+          const totalPublications = await Publication.countDocuments({}).exec();
+
+          if(!publications || publications.length <= 0)
+          {
+               return response.status(404).send
+               ({
+                    status: 'Error',
+                    message: 'No publications found...'
+               });
+          }
+          return response.status(200).send
+          ({
+               status: 'Success',
+               message: 'List Publication by User', 
+               page: page,
+               pages: Math.ceil(totalPublications/itemsPerPage), 
+               totalPublications: totalPublications,
+               publications,
+          });
+     }).catch(() => 
+     {
+          return response.status(500).json
+          ({
+               status: 'Error',
+               message: 'Error listing publications...'
+          });
+     });
+}
 
 // List a user publication
 
@@ -163,5 +207,6 @@ module.exports =
      testPublication,
      savePublication,
      getPublicationById,
-     deletePublicationById
+     deletePublicationById,
+     listPublicationsByIdUser
 };

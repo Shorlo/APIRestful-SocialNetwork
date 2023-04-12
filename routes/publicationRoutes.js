@@ -33,5 +33,6 @@ router.get('/testPublication', PublicationController.testPublication);
 router.post('/savePublication', check.auth, PublicationController.savePublication);
 router.get('/getPublicationById/:id', check.auth, PublicationController.getPublicationById);
 router.delete('/deletePublicationById/:id', check.auth, PublicationController.deletePublicationById);
+router.get('/listPublicationsByIdUser/:id/:page?', check.auth, PublicationController.listPublicationsByIdUser);
 
 module.exports = router;

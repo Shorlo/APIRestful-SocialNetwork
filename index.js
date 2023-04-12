@@ -25,7 +25,9 @@
 const { connection } = require('./database/connection');
 const express = require('express');
 const cors = require('cors');
-
+const UserRoutes = require('./routes/userRoutes');
+const PublicationRoutes = require('./routes/publicationRoutes');
+const FollowRoutes = require('./routes/followRoutes');
 // welcome message
 console.log('Loading ApiRestful SocialNetwork');
 // database connection
@@ -42,28 +44,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-// test route
-/*
-app.get('/test', (request, response) =>
-{
-    return response.status(200).json
-    ({
-        id: 1,
-        name: 'Javier',
-        'web': 'syberiancode.com'
-    });
-});
-*/
-
 // load route config
-const UserRoutes = require('./routes/userRoutes');
-const PublicationRoutes = require('./routes/publicationRoutes');
-const FollowRoutes = require('./routes/followRoutes');
-
 app.use('/api/user', UserRoutes);
 app.use('/api/publication', PublicationRoutes);
 app.use('/api/follow', FollowRoutes);
-
 
 // put server to listen http request
 app.listen(PORT, () =>

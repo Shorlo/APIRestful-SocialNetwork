@@ -26,7 +26,7 @@ const {Schema, model} = require('mongoose');
 
 const UserSchema = Schema
 ({
-    name: 
+    name:
     {
         type: String,
         require: true
@@ -46,12 +46,14 @@ const UserSchema = Schema
     password:
     {
         type: String,
-        require: true
+        require: true,
+        select: false
     },
     role:
     {
         type: String,
-        default: 'role_user'
+        default: 'role_user',
+        select: false
     },
     image:
     {
@@ -64,5 +66,5 @@ const UserSchema = Schema
         default: Date.now
     }
 });
-                        
+
 module.exports = model('User', UserSchema, 'users'); //'MODEL_NAME, MODEL_SCHEMA, COLLECTION_MODEL_DATABASE

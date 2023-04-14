@@ -34,13 +34,13 @@ const Publication = require('../models/Publication');
 const validate = require('../helpers/validate');
 
 // Test actions
-const testUser = (request, response) => 
+const testUser = (request, response) =>
 {
      return response.status(200).send
      ({
           message: 'Message sent from: controllers/user.js',
           user: request.user
-     });  
+     });
 }
 
 // Register users
@@ -48,7 +48,7 @@ const registerUser = (request, response) =>
 {
      // Get data
      let params = request.body;
-     
+
      // Check data validator
      if(!params.name || !params.nick || !params.email || !params.password)
      {
@@ -72,10 +72,10 @@ const registerUser = (request, response) =>
                message: 'Validation failed'
           });
      }
-     
+
      User.find
      ({
-          $or: 
+          $or:
           [
                {email: params.email.toLowerCase()},
                {nick: params.nick.toLowerCase()}
@@ -94,7 +94,7 @@ const registerUser = (request, response) =>
           let pwd = await bcrypt.hash(params.password, 10);
           params.password = pwd;
 
-          // Check duplicates    
+          // Check duplicates
           let userToSave = new User(params);
 
           // Save user in database and return response
@@ -108,11 +108,15 @@ const registerUser = (request, response) =>
                          message: 'User to stored is not exist...'
                     });
                }
+               const userCreated = userStored.toObject();
+               delete userCreated.password;
+               delete userCreated.role;
+
                return response.status(200).json
                ({
                     status: 'Success',
                     message: 'User stored successfuly!',
-                    user: userStored
+                    user: userCreated
                });
           }).catch(() =>
           {
@@ -144,9 +148,9 @@ const loginUser = (request, response) =>
                message: 'Missing data to send'
           });
      }
-     
+
      // Search in database if exists
-                                      //.select({'password': 0})       
+                                      //.select({'password': 0})
      User.findOne({email: params.email}).then((user) =>
      {
           if(!user)
@@ -168,7 +172,7 @@ const loginUser = (request, response) =>
                     message: 'Password incorrect...'
                });
           }
-          
+
           // Get token
           const token = jwt.createToken(user);
 
@@ -177,7 +181,7 @@ const loginUser = (request, response) =>
           ({
                status: 'Success',
                message: 'Login successfully',
-               user: 
+               user:
                {
                     id: user._id,
                     name: user.name,
@@ -185,7 +189,7 @@ const loginUser = (request, response) =>
                },
                token
           });
-     }).catch(() => 
+     }).catch(() =>
      {
           return response.status(500).send
                ({
@@ -240,10 +244,10 @@ const listUserPerPage = (request, response) =>
      {
           page = parseInt(request.params.page);
      }
-     
+
      // Query mongoose pagination
      let itemsPerPage = 5;
-     
+
      //User.find().select({password: 0, role: 0, email: 0, __v: 0}).sort('_id').paginate(page, itemsPerPage).then(async (users) =>
      User.find().select('-password -role -email -__v').sort('_id').paginate(page, itemsPerPage).then(async (users) =>
      {
@@ -255,13 +259,13 @@ const listUserPerPage = (request, response) =>
                ({
                     status: 'Error',
                     message: "No users avaliable..."
-                    
+
                });
           }
 
           // Get follow info
           let followUserIds = await followService.followUserIds(request.user.id);
-          
+
           // Return response
           return response.status(200).send
           ({
@@ -280,7 +284,7 @@ const listUserPerPage = (request, response) =>
           ({
                status: 'Error',
                message: 'Query error...'
-               
+
           });
      });
 }
@@ -299,7 +303,7 @@ const updateUser = (request, response) =>
 
      User.find
      ({
-          $or: 
+          $or:
           [
                {email: userToUpdate.email.toLowerCase()},
                {nick: userToUpdate.nick.toLowerCase()}
@@ -335,7 +339,7 @@ const updateUser = (request, response) =>
                delete userToUpdate.password;
           }
 
-          User.findByIdAndUpdate({_id: userIdentity.id}, userToUpdate, {new: true}).then((userUpdated)=> 
+          User.findByIdAndUpdate({_id: userIdentity.id}, userToUpdate, {new: true}).then((userUpdated)=>
           {
                if(!userUpdated)
                {
@@ -387,7 +391,7 @@ const uploadImage = (request, response) =>
 
      // Get extension file
      const extensionFile = imageFile.split('.')[1];
-     
+
      // If file is not image delete
      if(extensionFile != 'png' && extensionFile != 'jpeg' && extensionFile != 'jpg' && extensionFile != 'gif' && extensionFile != 'PNG' && extensionFile != 'JPEG' && extensionFile != 'JPG' && extensionFile != 'GIF')
      {
@@ -429,7 +433,7 @@ const uploadImage = (request, response) =>
      }
 }
 
-const getAvatar = (request, response) => 
+const getAvatar = (request, response) =>
 {
      // Get url params for the image
      const fileAvatar = request.params.fileAvatar;
@@ -456,10 +460,10 @@ const getAvatar = (request, response) =>
                     message: 'File is not exists...'
                });
           }
-          
+
           // Return file
           return response.sendFile(path.resolve(filePath)); // <-- ABSOLUTE PATH require('path')
-     });  
+     });
 }
 
 const counters = async (request, response) =>

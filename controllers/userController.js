@@ -344,10 +344,10 @@ const updateUser = (request, response) =>
                if(!userUpdated)
                {
                     return response.status(404).json
-               ({
-                    status: 'Error',
-                    message: "Error updating user"
-               });
+                    ({
+                        status: 'Error',
+                        message: "Error updating user"
+                    });
                }
                return response.status(200).send
                ({
